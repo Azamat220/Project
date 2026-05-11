@@ -1,74 +1,72 @@
 # WhatsApp Chat Bot Platform
 
-Мультибот платформа для автоматизации WhatsApp-переписки с поддержкой ИИ, управления лидами и интеграций с внешними сервисами.
+A multi-bot platform for automating WhatsApp conversations with AI support, lead management, and external service integrations.
 
-## Возможности
+## Features
 
-- **3 независимых WhatsApp-бота** с раздельными сессиями и настройками
-- **GPT-4o** для обработки текстовых, голосовых и графических сообщений
-- **Семантический поиск** по каталогу товаров через pgvector
-- **Интеграции**: amoCRM, Telegram-уведомления, Google Sheets
-- **Центральная админ-панель** для управления всеми ботами
-- **Human handover**: автоматическое переключение на живого менеджера
-- **Пакетная обработка** сообщений с настраиваемым таймаутом
+- **3 independent WhatsApp bots** with separate sessions and configurations
+- **GPT-4o** for processing text, voice, and image messages
+- **Semantic product search** via pgvector
+- **Integrations**: amoCRM, Telegram notifications, Google Sheets
+- **Central admin panel** for managing all bots
+- **Human handover**: automatic switching to a live agent
+- **Batch message processing** with configurable timeout
 
-## Стек технологий
+## Tech Stack
 
 - **Runtime**: Node.js 20, Python 3.10
 - **WhatsApp**: whatsapp-web.js + Puppeteer
-- **AI**: OpenAI GPT-4o, Whisper (транскрипция аудио)
-- **БД**: PostgreSQL + pgvector (векторный поиск)
-- **Инфраструктура**: Docker Compose, Nginx
-- **Уведомления**: Telegram Bot API
+- **AI**: OpenAI GPT-4o, Whisper (audio transcription)
+- **Database**: PostgreSQL + pgvector (vector search)
+- **Infrastructure**: Docker Compose, Nginx
+- **Notifications**: Telegram Bot API
 
-## Структура проекта# Project
-
+## Project Structure
 webhook_wb/
-├── node-decide/      # Бот 1
-├── node-bot2/        # Бот 2
-├── node-bot3/        # Бот 3
-├── central-admin/    # Панель управления (Python/FastAPI)
-├── shared/           # Общие данные, промпты, изображения
-├── sessions/         # WhatsApp-сессии (не коммитить)
-├── nginx/            # Конфиг реверс-прокси
+├── node-decide/      # Bot 1
+├── node-bot2/        # Bot 2
+├── node-bot3/        # Bot 3
+├── central-admin/    # Admin panel (Python/FastAPI)
+├── shared/           # Shared data, prompts, images
+├── sessions/         # WhatsApp sessions (do not commit)
+├── nginx/            # Reverse proxy config
 └── docker-compose.yml
 
+## Installation
 
-## Установка и запуск
+### Requirements
 
-### Требования
+- Docker and Docker Compose
+- Node.js 20+ (for local development)
 
-- Docker и Docker Compose
-- Node.js 20+ (для локальной разработки)
-
-### 1. Клонировать репозиторий
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Azamat220/Project.git
 cd Project
 ```
 
-### 2. Создать файл `.env`
+### 2. Create a `.env` file
 
 ```bash
 cp .env.example .env
 ```
 
-Заполнить все переменные (см. раздел ниже).
+Fill in all variables (see section below).
 
-### 3. Запустить
+### 3. Start
 
 ```bash
 docker-compose up -d
 ```
 
-Открыть админ-панель: `http://localhost:8000`
+Open the admin panel at `http://localhost:8000`.
 
-Для подключения WhatsApp — отсканировать QR-код в панели каждого бота.
+To connect WhatsApp — scan the QR code in each bot's panel.
 
-## Переменные окружения
+## Environment Variables
 
-Создайте `.env` файл в корне проекта:
+Create a `.env` file in the project root:
 
 ```env
 # OpenAI
@@ -81,7 +79,7 @@ OPENAI_PROJECT_ID_2=
 OPENAI_PROJECT_ID_3=
 
 # Google Cloud / Sheets
-GOOGLE_CREDENTIALS=        # путь к gcp.json или JSON-строка
+GOOGLE_CREDENTIALS=        # path to gcp.json or JSON string
 GOOGLE_SHEET_ID=
 GOOGLE_SHEET_NAME=
 
@@ -102,7 +100,7 @@ TELEGRAM_CHAT_ID_2=
 TELEGRAM_BOT_TOKEN_3=
 TELEGRAM_CHAT_ID_3=
 
-# Боты — учётные данные для админки
+# Bot credentials for admin panel
 BOT1_USER=
 BOT1_PASS=
 BOT2_USER=
@@ -111,35 +109,35 @@ BOT3_USER=
 BOT3_PASS=
 ```
 
-> ⚠️ Никогда не коммитьте `.env` и `shared/secrets/gcp.json` в репозиторий.
+> ⚠️ Never commit `.env` or `shared/secrets/gcp.json` to the repository.
 
-## Настройка промптов
+## Prompt Configuration
 
-Промпты для каждого бота хранятся в `shared/bots/<bot_id>/prompt.txt`. Их можно обновлять через API без перезапуска:
+Prompts for each bot are stored in `shared/bots/<bot_id>/prompt.txt`. They can be updated via API without restarting:
 
 ```bash
 curl -X POST http://localhost:3001/api/reload-prompt
 ```
 
-## API эндпоинты (каждый бот)
+## API Endpoints (per bot)
 
-| Метод | Путь | Описание |
-|-------|------|----------|
-| GET | `/api/status` | Статус подключения WhatsApp |
-| GET | `/api/qr` | QR-код для авторизации |
-| GET | `/api/active-chats` | Список чатов с живым менеджером |
-| POST | `/api/send-message` | Отправить сообщение |
-| POST | `/api/release-chat` | Вернуть чат боту |
-| POST | `/api/reload-prompt` | Перезагрузить промпт |
-| POST | `/api/update-settings` | Изменить таймауты |
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/status` | WhatsApp connection status |
+| GET | `/api/qr` | QR code for authorization |
+| GET | `/api/active-chats` | Chats handled by a live agent |
+| POST | `/api/send-message` | Send a message |
+| POST | `/api/release-chat` | Return chat to the bot |
+| POST | `/api/reload-prompt` | Reload prompt |
+| POST | `/api/update-settings` | Update timeouts |
 
-## Добавление товаров в каталог
+## Adding Products to the Catalog
 
-Товары хранятся в таблице `products_2` / `products_3` PostgreSQL с векторными эмбеддингами. Для добавления нового товара нужно записать его в БД с предварительно сгенерированным embedding через OpenAI `text-embedding-3-small`.
+Products are stored in the `products_2` / `products_3` PostgreSQL tables with vector embeddings. To add a new product, insert it into the database with a pre-generated embedding via OpenAI `text-embedding-3-small`.
 
-## Безопасность
+## Security
 
-- Все секреты передаются через переменные окружения
-- `gcp.json` монтируется как volume, не копируется в образ
-- Nginx настроен с базовыми security headers
-- Human handover защищает чаты от двойной обработки
+- All secrets are passed via environment variables
+- `gcp.json` is mounted as a volume, not copied into the image
+- Nginx is configured with basic security headers
+- Human handover prevents double-processing of chats
