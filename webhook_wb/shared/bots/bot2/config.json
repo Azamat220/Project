@@ -1,0 +1,4 @@
+{
+  "batch_timeout_seconds": 1,
+  "auto_release_minutes": 60
+}

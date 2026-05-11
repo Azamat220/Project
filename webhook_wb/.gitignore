@@ -1,0 +1,5 @@
+shared/secrets/gcp.json
+.env
+.env.*
+webhook_wb/shared/secrets/gcp.json
+webhook_wb/central-admin/.env
